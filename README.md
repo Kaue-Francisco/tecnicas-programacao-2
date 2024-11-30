@@ -1,1 +1,1 @@
-# tecnicas-programacao-2
+# tecnicas-II
