@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:root@localhost:3306/atv5"
+}
+
+model acomodacao {
+  id             Int             @id @default(autoincrement())
+  tipo           String?         @db.VarChar(255)
+  clienteId      Int?
+  clientetitular clientetitular? @relation(fields: [clienteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acomodacao_ibfk_1")
+
+  @@index([clienteId], map: "clienteId")
+}
+
+model clientedependente {
+  id             Int             @id @default(autoincrement())
+  nome           String?         @db.VarChar(255)
+  nomeSocial     String?         @db.VarChar(255)
+  dataNasc       DateTime?       @db.DateTime(0)
+  titularId      Int?
+  clientetitular clientetitular? @relation(fields: [titularId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clientedependente_ibfk_1")
+
+  @@index([titularId], map: "titularId")
+}
+
+model clientetitular {
+  id                Int                 @id @default(autoincrement())
+  nome              String?             @db.VarChar(255)
+  nomeSocial        String?             @db.VarChar(255)
+  dataNasc          DateTime?           @db.DateTime(0)
+  enderecoId        Int?
+  acomodacao        acomodacao[]
+  clientedependente clientedependente[]
+  endereco          endereco?           @relation(fields: [enderecoId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clientetitular_ibfk_1")
+  documento         documento[]
+  telefone          telefone[]
+
+  @@index([enderecoId], map: "enderecoId")
+}
+
+model documento {
+  id             Int             @id @default(autoincrement())
+  tipo           String?         @db.VarChar(255)
+  numero         String?         @db.VarChar(255)
+  dataEmissao    DateTime?       @db.DateTime(0)
+  clienteId      Int?
+  clientetitular clientetitular? @relation(fields: [clienteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documento_ibfk_1")
+
+  @@index([clienteId], map: "clienteId")
+}
+
+model endereco {
+  id             Int              @id @default(autoincrement())
+  rua            String?          @db.VarChar(255)
+  bairro         String?          @db.VarChar(255)
+  cidade         String?          @db.VarChar(255)
+  estado         String?          @db.VarChar(255)
+  pais           String?          @db.VarChar(255)
+  cep            String?          @db.VarChar(255)
+  clientetitular clientetitular[]
+}
+
+model telefone {
+  id             Int             @id @default(autoincrement())
+  ddd            String?         @db.VarChar(255)
+  numero         String?         @db.VarChar(255)
+  clienteId      Int?
+  clientetitular clientetitular? @relation(fields: [clienteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "telefone_ibfk_1")
+
+  @@index([clienteId], map: "clienteId")
+}
